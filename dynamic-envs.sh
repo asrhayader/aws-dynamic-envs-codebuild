@@ -206,12 +206,7 @@ echo "SERVICE is '${SERVICE}' ; ACTIVE_SERVICE is '${ACTIVE_SERVICE}'"
           LISTENER=`aws elbv2 describe-listeners --load-balancer ${LOAD_BALANCER_ARN} | jq -r ' .Listeners[] | select(.Port == 443) | .ListenerArn '` #GET Listener ARN
           if [[ -z "$LISTENER" ]]; then echo "Couldn't find LB Listener ARN!"; exit 1; 
           else echo "Listener ARN is $LISTENER!"; fi
-          #create_LB_rules "*.${IMAGE_TAG}.${REPO_NAME}.company.com"
-          #create_LB_rules "${IMAGE_TAG}.${REPO_NAME}.company.com"
-          #create_LB_rules "${BASE_TAG}-${IMAGE_TAG}.${REPO_NAME}.company.com"
-          create_LB_rules "*${IMAGE_TAG}.${REPO_NAME}.company.com" #Create LB rule for DNS record line dev-f-FS-12345.mp-admin-portal.company.com
-          #REVISION=`aws ecs describe-task-definition --task-definition FS-123-dev-portal | jq -r .taskDefinition.revision`
-          #if [[ -z "$REVISION" || $REVISON lt 1 ]]; then echo "Invalid task definition revision ($REVISION) !"; exit 1; fi
+          create_LB_rules "*${IMAGE_TAG}.${REPO_NAME}.company.com" #Create LB rule for DNS record like dev-f-FS-12345.webapp.company.com
           #Create service
           SERVICE_ARN=`aws ecs create-service --cluster ${CLUSTER} --service-name ${SERVICE} --task-definition ${TASK_DEF} --desired-count 1 --load-balancers targetGroupArn=${TARGET_GROUP},containerName=${SERVICE},containerPort=${CONTAINER_PORT} | jq -r .service.serviceArn` #Create service with name $SERVICE
           if [[ -z "$SERVICE_ARN" ]]; then echo "Couldn't create service"; exit 1; fi
@@ -309,7 +304,6 @@ if [[ ${CODEBUILD_WEBHOOK_EVENT} == "PULL_REQUEST_CREATED" ]]; then
   }
 "
   echo $JSON_DATA > /tmp/$HOSTEDZONEID-update.json #Savinf JSON_DATA into tmp file
-  #cat /tmp/$HOSTEDZONEID-update.json
   aws route53 change-resource-record-sets --hosted-zone-id $HOSTEDZONEID --change-batch file:///tmp/$HOSTEDZONEID-update.json && echo "Records updated"
   #If EVENT="UPDATE" - use UPSET to update or create DNS records
 elif [[ ${CODEBUILD_WEBHOOK_EVENT} == "PULL_REQUEST_UPDATED" ]]; then 
