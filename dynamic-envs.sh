@@ -111,7 +111,7 @@ echo "SERVICE is '${SERVICE}' ; ACTIVE_SERVICE is '${ACTIVE_SERVICE}'"
           #Deleting service
           aws ecs delete-service --cluster ${CLUSTER} --service arn:aws:ecs:${REGION}:${AWS_ACCOUNT_ID}:service/${CLUSTER}/${SERVICE}
           #Deleting LB rule
-          delete_LB_rules "*${IMAGE_TAG}.${REPO_NAME}.flowhealthlabs.com"
+          delete_LB_rules "*${IMAGE_TAG}.${REPO_NAME}.company.com"
           echo "Function delete_service() finished"
         }
         ##Define Sub function to update already registered ECS service
@@ -206,10 +206,10 @@ echo "SERVICE is '${SERVICE}' ; ACTIVE_SERVICE is '${ACTIVE_SERVICE}'"
           LISTENER=`aws elbv2 describe-listeners --load-balancer ${LOAD_BALANCER_ARN} | jq -r ' .Listeners[] | select(.Port == 443) | .ListenerArn '` #GET Listener ARN
           if [[ -z "$LISTENER" ]]; then echo "Couldn't find LB Listener ARN!"; exit 1; 
           else echo "Listener ARN is $LISTENER!"; fi
-          #create_LB_rules "*.${IMAGE_TAG}.${REPO_NAME}.flowhealthlabs.com"
-          #create_LB_rules "${IMAGE_TAG}.${REPO_NAME}.flowhealthlabs.com"
-          #create_LB_rules "${BASE_TAG}-${IMAGE_TAG}.${REPO_NAME}.flowhealthlabs.com"
-          create_LB_rules "*${IMAGE_TAG}.${REPO_NAME}.flowhealthlabs.com" #Create LB rule for DNS record line dev-f-FS-12345.mp-admin-portal.flowhealthlabs.com
+          #create_LB_rules "*.${IMAGE_TAG}.${REPO_NAME}.company.com"
+          #create_LB_rules "${IMAGE_TAG}.${REPO_NAME}.company.com"
+          #create_LB_rules "${BASE_TAG}-${IMAGE_TAG}.${REPO_NAME}.company.com"
+          create_LB_rules "*${IMAGE_TAG}.${REPO_NAME}.company.com" #Create LB rule for DNS record line dev-f-FS-12345.mp-admin-portal.company.com
           #REVISION=`aws ecs describe-task-definition --task-definition FS-123-dev-portal | jq -r .taskDefinition.revision`
           #if [[ -z "$REVISION" || $REVISON lt 1 ]]; then echo "Invalid task definition revision ($REVISION) !"; exit 1; fi
           #Create service
